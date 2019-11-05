@@ -8,6 +8,18 @@ class Vector:
         self.x = x
         self.y = y
         self.magnitude = math.sqrt(x ** 2 + y ** 2)
+        if self.magnitude != 0:
+            self.direction_x = -x / self.magnitude
+            self.direction_y = -y / self.magnitude
+        else:
+            self.direction_x = 0
+            self.direction_y = 0
+
+    def normalize(self):
+        if self.magnitude != 0:
+            self.x /= self.magnitude
+            self.y /= self.magnitude
+            self.magnitude = 1
 
 
 def project_vector(vector1, vector2):
@@ -77,15 +89,49 @@ def is_collision(circle_centre, rectangle_points):
     return True
 
 
+def get_minimum_translation_vector(circle_centre, rectangle_points):
+    closest_point = get_closest_point(circle_centre, rectangle_points)
+    rectangle_edge_vectors = []
+    for point in rectangle_points:
+        rectangle_edge_vectors += [get_vector(point)]
+    rectangle_edge_normals = []
+    for i in range(len(rectangle_points) - 1):
+        rectangle_edge_normals += [get_normal(get_vector((rectangle_points[i + 1][0] - rectangle_points[i][0], rectangle_points[i + 1][1] - rectangle_points[i][1])))]
+    rectangle_edge_normals += [get_normal(get_vector((rectangle_points[0][0] - rectangle_points[len(rectangle_points) - 1][0], rectangle_points[0][1] - rectangle_points[len(rectangle_points) - 1][1])))]
+    rectangle_edge_normals += [get_vector((circle_centre[0] - closest_point[0], circle_centre[1] - closest_point[1]))]
+    axes = rectangle_edge_normals
+    for axis in axes:
+        axis.normalize()
+    vectors = rectangle_edge_vectors
+    minimum_translation_vector = Vector(axes[0].x, axes[0].y)
+    minimum_translation_vector.magnitude = float('inf')
+    current_minimum_translation_vector = Vector(axes[0].x, axes[0].y)
+    current_minimum_translation_vector.magnitude = float('inf')
+    for axis in axes:
+        current_rect_max_x = float('-inf')
+        current_rect_min_x = float('inf')
+        for vector in vectors:
+            current_rect_projection = project_vector(vector, axis)
+            if current_rect_projection >= current_rect_max_x:
+                current_rect_max_x = current_rect_projection
+            if current_rect_projection <= current_rect_min_x:
+                current_rect_min_x = current_rect_projection
+        current_circle_projection = project_vector(get_vector(circle_centre), axis)
+        current_circle_max_x = current_circle_projection + 25
+        current_circle_min_x = current_circle_projection - 25
+        current_minimum_translation_vector = axis
+        current_minimum_translation_vector.magnitude = abs(current_circle_min_x - current_rect_max_x)
+        if current_minimum_translation_vector.magnitude <= minimum_translation_vector.magnitude:
+            minimum_translation_vector = axis
+            minimum_translation_vector.magnitude = current_minimum_translation_vector.magnitude
+    return minimum_translation_vector
+
+
 if __name__ == "__main__":
-    # rectangle_points_main = [(250, 250), (300, 250), (300, 300), (300, 250)]
-    # circle_centre_main = (230, 340)
-    # if is_collision(circle_centre_main, rectangle_points_main):
-    #     print("***** COLLISION *****")
     pygame.init()
     display = pygame.display.set_mode((500, 500))
     rectangle_points_main = [(250, 250), (300, 250), (300, 300), (250, 300)]
-    rect = (250, 250, 50, 50)
+    rect = [250, 250, 50, 50]
     circle_centre_main = (0, 0)
     clock = pygame.time.Clock()
     while True:
@@ -97,9 +143,15 @@ if __name__ == "__main__":
         display.fill((255, 255, 255))
         if is_collision(circle_centre_main, rectangle_points_main):
             pygame.draw.circle(display, (255, 0, 0), circle_centre_main, 25)
+            minimum_translation_vector_main = get_minimum_translation_vector(circle_centre_main, rectangle_points_main)
+            dx = minimum_translation_vector_main.magnitude * minimum_translation_vector_main.direction_x
+            dy = minimum_translation_vector_main.magnitude * minimum_translation_vector_main.direction_y
+            rect[0] = rect[0] + dx
+            rect[1] = rect[1] + dy
+            rectangle_points_main = [(rectangle_points_main[0][0] + dx, rectangle_points_main[0][1] + dy), (rectangle_points_main[1][0] + dx, rectangle_points_main[1][1] + dy), (rectangle_points_main[2][0] + dx, rectangle_points_main[2][1] + dy), (rectangle_points_main[3][0] + dx, rectangle_points_main[3][1] + dy)]
         else:
             pygame.draw.circle(display, (0, 0, 255), circle_centre_main, 25)
-        pygame.draw.rect(display, (0, 255, 0), rect)
+        pygame.draw.rect(display, (0, 255, 0), (rect[0], rect[1], 50, 50))
         dt = clock.tick(60)
         dt /= 1000
         pygame.display.update()
