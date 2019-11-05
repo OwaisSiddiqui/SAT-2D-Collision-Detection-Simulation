@@ -130,23 +130,27 @@ def get_minimum_translation_vector(circle_centre, rectangle_points):
 if __name__ == "__main__":
     pygame.init()
     display = pygame.display.set_mode((500, 500))
-    rectangle_points_main = [(250, 250), (300, 250), (300, 300), (250, 300)]
-    circle_centre_main = (0, 0)
+    rectangle_points_main = [(225, 250), (275, 225), (275, 500), (225, 500)]
+    circle_centre_main = (250, 0)
     clock = pygame.time.Clock()
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            circle_centre_main = (pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+        if circle_centre_main[1] < 500:
+            circle_centre_main = (circle_centre_main[0], circle_centre_main[1] + 1)
         display.fill((255, 255, 255))
         if is_collision(circle_centre_main, rectangle_points_main):
             minimum_translation_vector_main = get_minimum_translation_vector(circle_centre_main, rectangle_points_main)
             dx = minimum_translation_vector_main.magnitude * minimum_translation_vector_main.direction_x
             dy = minimum_translation_vector_main.magnitude * minimum_translation_vector_main.direction_y
             circle_centre_main = (circle_centre_main[0] + dx, circle_centre_main[1] + dy)
-        pygame.draw.circle(display, (0, 0, 255), (int(circle_centre_main[0]), int(circle_centre_main[1])), 25)
-        pygame.draw.rect(display, (0, 255, 0), (rectangle_points_main[0][0], rectangle_points_main[0][1], 50, 50))
+            pygame.draw.circle(display, (255, 0, 0), (int(circle_centre_main[0]), int(circle_centre_main[1])), 25)
+        else:
+            pygame.draw.circle(display, (0, 0, 255), (int(circle_centre_main[0]), int(circle_centre_main[1])), 25)
+        pygame.draw.polygon(display, (0, 255, 0), [[225, 250], [274, 250], [274, 225]], 0)
+        pygame.draw.rect(display, (0, 255, 0), (225, 250, 50, 250))
         dt = clock.tick(60)
         dt /= 1000
         pygame.display.update()
