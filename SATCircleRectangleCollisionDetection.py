@@ -9,8 +9,8 @@ class Vector:
         self.y = y
         self.magnitude = math.sqrt(x ** 2 + y ** 2)
         if self.magnitude != 0:
-            self.direction_x = x / self.magnitude
-            self.direction_y = y / self.magnitude
+            self.direction_x = -x / self.magnitude
+            self.direction_y = -y / self.magnitude
         else:
             self.direction_x = 0
             self.direction_y = 0
@@ -130,27 +130,27 @@ def get_minimum_translation_vector(circle_centre, rectangle_points):
 if __name__ == "__main__":
     pygame.init()
     display = pygame.display.set_mode((500, 500))
-    rectangle_points_main = [(225, 250), (275, 225), (275, 500), (225, 500)]
-    circle_centre_main = (250, 0)
+    rectangle_points_main = [(280, 250), (300, 250), (300, 300), (250, 300)]
+    circle_centre_main = (279, 0)
     clock = pygame.time.Clock()
+    distance = 0
+    vel = 0
+    acel = 0.05
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-        if circle_centre_main[1] < 500:
-            circle_centre_main = (circle_centre_main[0], circle_centre_main[1] + 1)
+        circle_centre_main = (int(circle_centre_main[0]), int(circle_centre_main[1] + vel))
+        vel += 0.05
         display.fill((255, 255, 255))
         if is_collision(circle_centre_main, rectangle_points_main):
             minimum_translation_vector_main = get_minimum_translation_vector(circle_centre_main, rectangle_points_main)
-            dx = minimum_translation_vector_main.magnitude * minimum_translation_vector_main.direction_x
-            dy = minimum_translation_vector_main.magnitude * minimum_translation_vector_main.direction_y
-            circle_centre_main = (circle_centre_main[0] + dx, circle_centre_main[1] + dy)
-            pygame.draw.circle(display, (255, 0, 0), (int(circle_centre_main[0]), int(circle_centre_main[1])), 25)
-        else:
-            pygame.draw.circle(display, (0, 0, 255), (int(circle_centre_main[0]), int(circle_centre_main[1])), 25)
-        pygame.draw.polygon(display, (0, 255, 0), [[225, 250], [274, 250], [274, 225]], 0)
-        pygame.draw.rect(display, (0, 255, 0), (225, 250, 50, 250))
+            dx = -minimum_translation_vector_main.magnitude * minimum_translation_vector_main.direction_x
+            dy = -minimum_translation_vector_main.magnitude * minimum_translation_vector_main.direction_y
+            circle_centre_main = (int(circle_centre_main[0] + dx), int(circle_centre_main[1] + dy))
+        pygame.draw.circle(display, (0, 0, 255), circle_centre_main, 25)
+        pygame.draw.rect(display, (0, 255, 0), (rectangle_points_main[0][0], rectangle_points_main[0][1], 50, 50))
         dt = clock.tick(60)
         dt /= 1000
         pygame.display.update()
