@@ -1,5 +1,5 @@
 # Separating Axis Theorem (SAT) 2D collision detection simulation (with object reponse)
-This is a Separating Axis Theorem (SAT) circle with rectangle collision detection with object response.
+This is a 2D Separating Axis Theorem (SAT) circle with rectangle collision detection simulation with object response.
 
 # Installation
 To run this simulation, download the `SATCircleRectangleCollisionDetection.py` file from the repository and run it (click on the file or double click it). 
