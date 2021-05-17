@@ -1,4 +1,4 @@
-# Separating Axis Theorem (SAT) 2D collision detection simulation (with object reponse)
+# Separating Axis Theorem (SAT) 2D collision detection simulation (with collision reponse)
 This is a 2D Separating Axis Theorem (SAT) circle with rectangle collision detection simulation with collision response using minimum translation vector method.
 
 # Installation
