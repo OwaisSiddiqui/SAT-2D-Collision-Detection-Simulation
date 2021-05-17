@@ -1,6 +1,8 @@
 # Separating Axis Theorem (SAT) 2D collision detection simulation (with collision reponse)
 This is a 2D Separating Axis Theorem (SAT) circle with rectangle collision detection simulation with collision response using minimum translation vector method.
 
+![alt text](https://imgur.com/a/UuMx6u3)
+
 # Installation
 First git clone the repository: `git clone https://github.com/OwaisSiddiqui/SAT-2D-Collision-Detection-Simulation`
 Then, execute the following commands to run the simulation:
