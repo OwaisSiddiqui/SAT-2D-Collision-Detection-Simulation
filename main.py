@@ -129,6 +129,7 @@ def get_minimum_translation_vector(circle_centre, rectangle_points):
 
 if __name__ == "__main__":
     pygame.init()
+    pygame.display.set_caption('SAT 2D circle and rectangle collision detection simulation')
     display = pygame.display.set_mode((500, 500))
     rectangle_points_main = [(250, 250), (300, 250), (300, 300), (250, 300)]
     rect = [250, 250, 50, 50]
